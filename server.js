@@ -220,7 +220,47 @@ client.once('ready', async () => {
     }
 });
 */
+const TARGET_CHANNEL_ID = '1092252538553770054'; // استبدل هذا بمعرف القناة المطلوبة
 
+client.on('messageCreate', async message => {
+    // تجاهل الرسائل من البوتات وتجاهل الرسائل خارج القناة المحددة
+    if (message.author.bot || message.channel.id !== TARGET_CHANNEL_ID) return;
+
+    try {
+        // حذف الرسالة الأصلية
+        await message.delete();
+
+        // إنشاء مُضمّن (Embed) للرسالة الجديدة
+        const embed = new MessageEmbed()
+            .setColor('#0099ff')
+            .setAuthor({
+                name: message.author.username,
+                iconURL: message.author.displayAvatarURL({ dynamic: true })
+            })
+            .setDescription(message.content)
+            .setFooter({
+                text: `تم الإرسال في ${message.createdAt.toLocaleString()}`
+            })
+            .setTimestamp();
+
+        // إذا كانت الرسالة تحتوي على مرفقات (صور/ملفات)
+        if (message.attachments.size > 0) {
+            embed.setImage(message.attachments.first().url);
+        }
+
+        // إرسال الرسالة الجديدة كمُضمّن
+        const sentMessage = await message.channel.send({ embeds: [embed] });
+
+        // إضافة ردود الفعل (Reactions)
+        const reactions = ['👍', '👎', '❤️', '😂']; // يمكنك تغيير هذه الردود
+        for (const reaction of reactions) {
+            await sentMessage.react(reaction);
+        }
+
+    } catch (error) {
+        console.error('حدث خطأ:', error);
+    }
+});
 
 
 
@@ -241,7 +281,7 @@ client.on('messageCreate', message => {
 client.on('messageCreate', async message => {
   if (message.author.bot) return;
   const firstReactionWords = ["الحمد لله"]; 
-  const firstReactionEmoji = '❤️';
+  const firstReactionEmoji = '💞';
   const secondReactionWords = ['حمدلله','حمد الله','الحمد الله','حمدالله','الحمدالله','الحمدلله']; 
   const secondReactionEmoji = '❌';
   for (const word of firstReactionWords) {
