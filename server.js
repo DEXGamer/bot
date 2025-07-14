@@ -920,7 +920,7 @@ client.on('messageCreate', async message => {
     if (message.author.bot) return;
 
     // تحديد معرف القناة المسموح فيها
-    const targetChannelId = ''; // ← استبدل هذا بمعرف القناة الصحيح
+    const targetChannelId = '1184473749026783272'; // ← استبدل هذا بمعرف القناة الصحيح
     if (message.channel.id !== targetChannelId) return;
 
     // الإيموجيات (يمكن استخدام إيموجيات مخصصة أيضًا بصيغة <:name:id>)
