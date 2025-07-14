@@ -924,11 +924,11 @@ client.on('messageCreate', async message => {
     if (message.channel.id !== targetChannelId) return;
 
     // الإيموجيات (يمكن استخدام إيموجيات مخصصة أيضًا بصيغة <:name:id>)
-    const like = `${like}`;
-    const dislike = `${dislike}`;
-    const dance = `${dance}`;
-    const hmm = `${hmm}`;
-    const emo1 = `${yes}`; // رمز قبل الرسالة
+    const like = "👍";
+    const dislike = "👎";
+    const dance = "💃";
+    const hmm = "🤮";
+    const emo1 = "📌"; // رمز قبل الرسالة
 
     try {
         // حفظ المحتوى قبل الحذف
