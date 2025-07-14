@@ -914,52 +914,6 @@ client.on('messageCreate', async message => {
 
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// امر رسالة اقتاح ايمبد روم معين
-client.on('messageCreate', async message => {
-    // تجاهل رسائل البوت
-    if (message.author.bot) return;
-
-    // تحديد معرف القناة المسموح فيها
-    const targetChannelId = '1184473749026783272'; // ← استبدل هذا بمعرف القناة الصحيح
-    if (message.channel.id !== targetChannelId) return;
-
-    // الإيموجيات (يمكن استخدام إيموجيات مخصصة أيضًا بصيغة <:name:id>)
-    const like = "👍";
-    const dislike = "👎";
-    const dance = "💃";
-    const hmm = "🤮";
-    const emo1 = "📌"; // رمز قبل الرسالة
-
-    try {
-        // حفظ المحتوى قبل الحذف
-        const messageContent = message.content;
-
-        // حذف الرسالة الأصلية
-        await message.delete();
-
-        // إنشاء الإيمبد الجديد
-        const embed = new MessageEmbed()
-            .setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL({ dynamic: true }) })
-            .setDescription(`\n${emo1} **${messageContent || 'رسالة فارغة'}**`)
-            .setFooter({ text: `أُرسلت في: ${message.createdAt.toLocaleString()}` })
-            .setColor('#00FF00')
-            .setThumbnail(message.author.displayAvatarURL({ dynamic: true, size: 512 }))
-            .setImage('https://pa1.aminoapps.com/7321/8ada5eb7e59ed827596d480905017be98cec6111r1-833-250_hq.gif'); // صورة متحركة
-
-        // إرسال الرسالة الجديدة
-        const sentMessage = await message.channel.send({ embeds: [embed] });
-
-        // إضافة التفاعلات على الرسالة الجديدة
-        await sentMessage.react(like);
-        await sentMessage.react(dislike);
-        await sentMessage.react(dance);
-        await sentMessage.react(hmm);
-
-    } catch (error) {
-        console.error('حدث خطأ أثناء المعالجة:', error);
-    }
-});
-
 
 //////////////////////////////////////////////////////////////////////////////
 const targetReactions = 5; // عدد التفاعلات المطلوب للوصول إلى الهدف
