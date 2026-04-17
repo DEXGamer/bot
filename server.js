@@ -1174,7 +1174,7 @@ client.on('messageCreate', async message => {
 
 
 ////////////////////////////////////////////////////////////////////////////// كود رسائل خاص البوت
-const CHANNEL_ID = '890331117977219154'; // استبدل هذا بـ ID للقناة التي تريد إرسال الرسائل إليها
+const CHANNEL_ID = '937123929594658906'; // استبدل هذا بـ ID للقناة التي تريد إرسال الرسائل إليها
 client.on('messageCreate', async message => {
     if (message.channel.type === 'DM' && !message.author.bot) {
         try {
