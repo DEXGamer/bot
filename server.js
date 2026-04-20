@@ -1736,7 +1736,7 @@ client.on('messageCreate', async (message) => {
 const responses = JSON.parse(fs.readFileSync("./respons.json"));
 
 // عدد المنشنات المسموح بها لكل عضو في فترة زمنية محددة (10 دقائق في هذا المثال)
-const maxMentionsPerInterval = 10;
+const maxMentionsPerInterval = 20;
 const mentionInterval = 5 * 60 * 1000; // 10 minutes
 const userMentions = new Map();
 
@@ -1749,7 +1749,7 @@ client.on("messageCreate", async (message) => {
     const mentionsCount = (userMentions.get(userId) || 0) + 1;
 
     if (mentionsCount > maxMentionsPerInterval) {
-      return message.reply("**ماراح ارد عليك لانك ازعجتني بالمنشن .**");
+      return message.reply("# خلاص لاتمنشن ترا طفشت .");
     }
 
     userMentions.set(userId, mentionsCount);
