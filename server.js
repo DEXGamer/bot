@@ -219,7 +219,7 @@ client.once('ready', async () => {
         }
     }
 });
-*/
+
 const TARGET_CHANNEL_ID = ''; // استبدل هذا بمعرف القناة المطلوبة
 
 client.on('messageCreate', async message => {
@@ -256,7 +256,6 @@ client.on('messageCreate', async message => {
         for (const reaction of reactions) {
             await sentMessage.react(reaction);
         }
-
     } catch (error) {
         console.error('حدث خطأ:', error);
     }
@@ -270,50 +269,88 @@ client.on('messageCreate', message => {
     message.reply('# وصلت رسالتك للادارة .. شكرا 😎 .');
   }
 });
+*/
 
 
 //////////////////////////////////////////////////////////////////////////////
 
-const TARGET_CHANNEL_ID = '890331117977219154'; // ايدي الروم
+const TARGET_CHANNEL_ID = '890331117977219154'; // ايدي روم الاستقبال
 
+// 📩 استقبال رسائل الخاص
 client.on('messageCreate', async (message) => {
     try {
         if (message.author.bot) return;
 
-        // فقط الخاص
+        // =========================
+        // 1️⃣ إذا كانت الرسالة في الخاص (DM)
+        // =========================
         if (message.channel.type === 'DM') {
 
             const channel = await client.channels.fetch(TARGET_CHANNEL_ID);
             if (!channel) return;
 
-            // تجهيز النص
-            let content = `📩 رسالة جديدة من : ${message.author.tag}\n`;
-            if (message.content) {
-                content += `\n💬 ${message.content}`;
-            }
+            const embed = new MessageEmbed()
+                .setColor('#00aaff')
+                .setAuthor({
+                    name: message.author.tag,
+                    iconURL: message.author.displayAvatarURL({ dynamic: true })
+                })
+                .setDescription(message.content || '📎 بدون نص')
+                .setFooter({
+                    text: `ID: ${message.author.id}`
+                })
+                .setTimestamp();
 
-            // إرسال النص + المرفقات
+            // إرسال مع المرفقات إن وجدت
             if (message.attachments.size > 0) {
                 const files = message.attachments.map(att => att.url);
 
                 await channel.send({
-                    content: content,
+                    embeds: [embed],
                     files: files
                 });
             } else {
-                await channel.send({
-                    content: content
-                });
+                await channel.send({ embeds: [embed] });
             }
 
             // تأكيد للمستخدم
-            await message.reply('# ✅ تم إرسال رسالتك (مع المرفقات إن وجدت) بنجاح');
+            await message.reply('✅ تم إرسال رسالتك إلى الإدارة');
 
+        }
+
+        // =========================
+        // 2️⃣ الرد من الإدارة
+        // =========================
+        else if (message.channel.id === TARGET_CHANNEL_ID) {
+
+            // لازم ترد على رسالة (Reply)
+            if (!message.reference) return;
+
+            const repliedMsg = await message.channel.messages.fetch(message.reference.messageId);
+
+            if (!repliedMsg.embeds.length) return;
+
+            const embed = repliedMsg.embeds[0];
+
+            // استخراج ID من الفوتر
+            const userId = embed.footer?.text.replace('ID: ', '');
+            if (!userId) return;
+
+            const user = await client.users.fetch(userId);
+
+            if (!user) return;
+
+            // إرسال الرد للمستخدم
+            await user.send({
+                content: `📩 **رد من الإدارة :**\n${message.content}`
+            });
+
+            // تأكيد داخل الروم
+            await message.react('✅');
         }
 
     } catch (error) {
         console.error(error);
-        message.reply('❌ حدث خطأ أثناء إرسال رسالتك');
     }
 });
 
