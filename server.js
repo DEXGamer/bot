@@ -712,7 +712,7 @@ client.on('messageCreate', async (message) => {
             });
 
             // حذف الويب هوك بعد الإرسال مباشرة
-            await webhook.delete();
+            await message.delete();
         } catch (error) {
             console.error('حدث خطأ:', error);
             message.reply('❌ حدث خطأ أثناء إرسال الرسالة.');
@@ -1040,8 +1040,8 @@ client.on('messageCreate', async message => {
             } else {
                 // إرسال تنبيه أولي
                 const embed = new MessageEmbed()
-                    .setTitle('Warning Notice')
-                    .setDescription(`Please refrain from using banned words. This is a warning.`)
+                    .setTitle('# كلمة ممنوعة')
+                    .setDescription(`# راقب كلامك ترا في كلمة مو حلوة كتبتها`)
                     .setColor('YELLOW')
                     .setThumbnail(message.author.displayAvatarURL());
 
@@ -1431,7 +1431,7 @@ client.on("ready", async () => {
       } catch (err) {
         console.error(`Error sending message or reacting: ${err}`);
       }
-    }, 6 * 60 * 60 * 1000); // كل 5 ساعات
+    }, 3 * 60 * 60 * 1000); // كل 5 ساعات
   } catch (err) {
     console.error(`Error in setInterval: ${err}`);
   }
@@ -1730,7 +1730,7 @@ client.on('messageCreate', async (message) => {
             await message.delete();
 
             // إرسال رسالة خاصة للمرسل
-            await message.author.send(`**عذراً، تم حذف رسالتك لأنها تحتوي على كلمة غير مقبولة: "${foundBadWord}". يُفضل تجنب استخدام الكلمات غير المناسبة. شكراً لتفهمك!**`);
+            await message.author.send(`**# عذراً، تم حذف رسالتك لأنها تحتوي على كلمة غير مقبولة :[ /n# يفضل عدم كتابة كلمة "${foundBadWord}" ] بعد الان من فضلك**`);
         } catch (error) {
             console.error('خطأ في إرسال رسالة خاصة:', error);
         }
@@ -1754,7 +1754,7 @@ client.on("messageCreate", async (message) => {
     const mentionsCount = (userMentions.get(userId) || 0) + 1;
 
     if (mentionsCount > maxMentionsPerInterval) {
-      return message.reply("# خلاص لاتمنشن ترا طفشت .");
+      return message.reply("# خلاص خلاص انا طفشت ...");
     }
 
     userMentions.set(userId, mentionsCount);
