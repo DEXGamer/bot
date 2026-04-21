@@ -220,7 +220,7 @@ client.once('ready', async () => {
     }
 });
 */
-const TARGET_CHANNEL_ID = '911678247941595136'; // استبدل هذا بمعرف القناة المطلوبة
+const TARGET_CHANNEL_ID = ''; // استبدل هذا بمعرف القناة المطلوبة
 
 client.on('messageCreate', async message => {
     // تجاهل الرسائل من البوتات وتجاهل الرسائل خارج القناة المحددة
@@ -274,6 +274,48 @@ client.on('messageCreate', message => {
 
 //////////////////////////////////////////////////////////////////////////////
 
+const TARGET_CHANNEL_ID = '890331117977219154'; // ايدي الروم
+
+client.on('messageCreate', async (message) => {
+    try {
+        if (message.author.bot) return;
+
+        // فقط الخاص
+        if (message.channel.type === 'DM') {
+
+            const channel = await client.channels.fetch(TARGET_CHANNEL_ID);
+            if (!channel) return;
+
+            // تجهيز النص
+            let content = `📩 رسالة جديدة من : ${message.author.tag}\n`;
+            if (message.content) {
+                content += `\n💬 ${message.content}`;
+            }
+
+            // إرسال النص + المرفقات
+            if (message.attachments.size > 0) {
+                const files = message.attachments.map(att => att.url);
+
+                await channel.send({
+                    content: content,
+                    files: files
+                });
+            } else {
+                await channel.send({
+                    content: content
+                });
+            }
+
+            // تأكيد للمستخدم
+            await message.reply('✅ تم إرسال رسالتك (مع المرفقات إن وجدت) بنجاح');
+
+        }
+
+    } catch (error) {
+        console.error(error);
+        message.reply('❌ حدث خطأ أثناء إرسال رسالتك');
+    }
+});
 
 
 //////////////////////////////////////////////////////////////////////////////
