@@ -261,7 +261,7 @@ client.on('messageCreate', async message => {
     }
 });
 
-
+*/
 
 client.on('messageCreate', message => {
   if (message.channel.type === 'DM') {
@@ -269,7 +269,7 @@ client.on('messageCreate', message => {
     message.reply('# وصلت رسالتك للادارة .. شكرا 😎 .');
   }
 });
-*/
+
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -342,7 +342,7 @@ client.on('messageCreate', async (message) => {
 
             // إرسال الرد للمستخدم
             await user.send({
-                content: `📩 **رد من الإدارة :**\n${message.content}`
+                content: `# 📩 **رد من الإدارة :**\n# ${message.content}`
             });
 
             // تأكيد داخل الروم
