@@ -1166,31 +1166,42 @@ client.on('messageCreate', async message => {
 
 
 ////////////////////////////////////////////////////////////////////////////// كود رسائل خاص البوت
-const CHANNEL_ID = '890331117977219154'; // استبدل هذا بـ ID للقناة التي تريد إرسال الرسائل إليها
-client.on('messageCreate', async message => {
-    if (message.channel.type === 'DM' && !message.author.bot) {
-        try {
-            const channel = await client.channels.fetch(CHANNEL_ID);
-            if (channel) {
-                // تحقق إذا كانت الرسالة تحتوي على مرفق
-                if (message.attachments.size > 0) {
-                    // إذا كانت تحتوي على مرفق، أرسل المرفق إلى القناة
-                    const attachments = message.attachments.map(attachment => attachment.url);
-                    await channel.send({
-                        content: `📨 **رسالة تحتوي على مرفق من ${message.author.tag}:**`,
-                        files: attachments // إعادة إرسال المرفقات
-                    });
-                } else {
-                    // إذا لم تكن تحتوي على مرفق، أرسل النص فقط
-                    await channel.send(`📨 **رسالة من ${message.author.tag}:**\n${message.content}`);
-                }
-            }
-        } catch (error) {
-            console.error('Error sending message to the channel:', error);
-        }
-    }
-});
+const CHANNEL_ID = '890331117977219154';
 
+client.on('messageCreate', async (message) => {
+  try {
+    if (!message || message.author.bot) return;
+
+    // ✅ فحص آمن للـ DM
+    if (!message.channel || message.channel.type !== 'DM') return;
+
+    const channel = await client.channels.fetch(CHANNEL_ID).catch(() => null);
+    if (!channel) return;
+
+    // =========================
+    // 📎 إذا فيه مرفقات
+    // =========================
+    if (message.attachments?.size > 0) {
+      const files = message.attachments.map(a => a.url);
+
+      await channel.send({
+        content: `📨 **رسالة مع مرفق من ${message.author.tag}:**`,
+        files: files
+      });
+
+    } else {
+      // =========================
+      // 💬 نص فقط
+      // =========================
+      await channel.send(
+        `📨 **رسالة من ${message.author.tag}:**\n${message.content || 'بدون نص'}`
+      );
+    }
+
+  } catch (error) {
+    console.error('DM Forward Error:', error);
+  }
+});
 ////////////////////////////////////////////////////////////////////////////// كود تأكد من دخول
 client.on('messageCreate', (message) => {
   if (message.content === 'join') {
