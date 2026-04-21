@@ -307,7 +307,7 @@ client.on('messageCreate', async (message) => {
             }
 
             // تأكيد للمستخدم
-            await message.reply('✅ تم إرسال رسالتك (مع المرفقات إن وجدت) بنجاح');
+            await message.reply('# ✅ تم إرسال رسالتك (مع المرفقات إن وجدت) بنجاح');
 
         }
 
