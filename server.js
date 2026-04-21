@@ -1202,6 +1202,7 @@ client.on('messageCreate', async (message) => {
     console.error('DM Forward Error:', error);
   }
 });
+
 ////////////////////////////////////////////////////////////////////////////// كود تأكد من دخول
 client.on('messageCreate', (message) => {
   if (message.content === 'join') {
