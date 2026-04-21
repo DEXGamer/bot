@@ -263,19 +263,6 @@ client.on('messageCreate', async message => {
 
 */
 
-client.on('messageCreate', async (message) => {
-  try {
-    if (message.author.bot) return;
-
-    // التأكد أنها رسالة خاصة
-    if (message.channel.type === 'DM') {
-      await message.reply('✅ وصلت رسالتك للإدارة .. شكرا 😎');
-    }
-
-  } catch (error) {
-    console.error('DM Error:', error);
-  }
-});
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -320,7 +307,7 @@ client.on('messageCreate', async (message) => {
             }
 
             // تأكيد للمستخدم
-            await message.reply('✅ تم إرسال رسالتك إلى الإدارة');
+            await message.reply('# ✅ وصلت رسالتك للادارة .. شكرا ');
 
         }
 
