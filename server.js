@@ -89,26 +89,44 @@ const cute = "<:cuteheart:890924622361559060>"; // ايموجي كيوت قبل
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const TARGET_CHANNEL_ID = '911678247941595136';
+const CHANNEL_ID = '911678247941595136';
+
+let webhook;
 
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
-  if (message.channel.id !== TARGET_CHANNEL_ID) return;
-
+  if (message.channel.id !== CHANNEL_ID) return;
   if (message.attachments.size === 0) return;
 
   try {
-    // نحول كل مرفق إلى Attachment جديد
-    const files = message.attachments.map(att => {
-      return new MessageAttachment(att.url, att.name);
-    });
+    // إنشاء أو جلب webhook
+    if (!webhook) {
+      const hooks = await message.channel.fetchWebhooks();
+      webhook = hooks.find(w => w.name === 'MirrorBot');
+
+      if (!webhook) {
+        webhook = await message.channel.createWebhook('MirrorBot', {
+          avatar: client.user.displayAvatarURL()
+        });
+      }
+    }
+
+    // تجهيز الوسائط (صورة أو فيديو)
+    const files = message.attachments.map(att => ({
+      attachment: att.url,
+      name: att.name || 'media'
+    }));
+
+    const content = message.content || '';
 
     // حذف الرسالة الأصلية
     await message.delete();
 
-    // إعادة إرسالها كصورة/فيديو حقيقي
-    await message.channel.send({
-      content: `📩 من ${message.author}`,
+    // إعادة الإرسال بشكل طبيعي داخل الشات
+    await webhook.send({
+      username: message.member?.displayName || message.author.username,
+      avatarURL: message.author.displayAvatarURL({ dynamic: true }),
+      content: content,
       files: files
     });
 
@@ -116,6 +134,7 @@ client.on('messageCreate', async (message) => {
     console.error(err);
   }
 });
+
 
 
 
