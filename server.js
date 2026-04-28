@@ -91,31 +91,27 @@ const cute = "<:cuteheart:890924622361559060>"; // ايموجي كيوت قبل
 
 const TARGET_CHANNEL_ID = '911678247941595136'; // حط ID الروم هنا
 
-client.on('messageCreate', async (message) => {
-  // تجاهل البوتات
-  if (message.author.bot) return;
 
-  // تحقق من الروم
+client.on('messageCreate', async (message) => {
+  if (message.author.bot) return;
   if (message.channel.id !== TARGET_CHANNEL_ID) return;
 
-  // تحقق من وجود مرفقات (صور/فيديو)
   if (message.attachments.size === 0) return;
 
   try {
-    // خزن المرفقات
-    const files = message.attachments.map(att => att.url);
+    // استخراج روابط الصور/الفيديو
+    const links = message.attachments.map(att => att.url);
 
     // حذف الرسالة الأصلية
     await message.delete();
 
-    // إعادة الإرسال من طرف البوت
+    // إعادة الإرسال كرابط (ليس كملف)
     await message.channel.send({
-      content: `📩 تم إعادة الإرسال من طرف البوت (المرسل: ${message.author})`,
-      files: files
+      content: `📩 من ${message.author}\n${links.join('\n')}`
     });
 
-  } catch (error) {
-    console.error('Error:', error);
+  } catch (err) {
+    console.error(err);
   }
 });
 
