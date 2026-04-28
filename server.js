@@ -90,39 +90,31 @@ const cute = "<:cuteheart:890924622361559060>"; // ايموجي كيوت قبل
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const CHANNEL_ID = '1184473749026783272';
-
+const TARGET_CHANNEL_ID = '1184475254224072764';
 
 client.on('messageCreate', async (message) => {
+  if (message.author.bot) return;
+  if (message.channel.id !== TARGET_CHANNEL_ID) return;
+
+  if (message.attachments.size === 0) return;
+
   try {
-    if (message.author.bot) return;
-    if (message.channel.id !== CHANNEL_ID) return;
+    // نحول كل مرفق إلى Attachment جديد
+    const files = message.attachments.map(att => {
+      return new MessageAttachment(att.url, att.name);
+    });
 
-    // إذا ما فيهاش مرفقات → تجاهل
-    if (!message.attachments || message.attachments.size === 0) return;
-
-    // نتأكد أن فيها صورة أو فيديو
-    const hasMedia = message.attachments.some(att =>
-      att.contentType?.startsWith('image') ||
-      att.contentType?.startsWith('video')
-    );
-
-    if (!hasMedia) return;
-
-    // جمع الملفات
-    const files = message.attachments.map(att => att.url);
-
-    // نحذف الرسالة الأصلية
+    // حذف الرسالة الأصلية
     await message.delete();
 
-    // إعادة الإرسال (Discord يعرضها تلقائياً كصورة/فيديو)
+    // إعادة إرسالها كصورة/فيديو حقيقي
     await message.channel.send({
-      content: message.content || '',
+      content: `📩 من ${message.author}`,
       files: files
     });
 
   } catch (err) {
-    console.error('ERROR:', err);
+    console.error(err);
   }
 });
 
