@@ -91,24 +91,48 @@ const cute = "<:cuteheart:890924622361559060>"; // ايموجي كيوت قبل
 
 const TARGET_CHANNEL_ID = '911678247941595136';
 
+// نحفظ الويبهوك لتفادي إنشائه كل مرة
+let webhookCache = new Map();
+
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
   if (message.channel.id !== TARGET_CHANNEL_ID) return;
-
   if (message.attachments.size === 0) return;
 
   try {
-    // نحول كل مرفق إلى Attachment جديد
-    const files = message.attachments.map(att => {
-      return new MessageAttachment(att.url, att.name);
-    });
+    let webhook;
 
-    // حذف الرسالة الأصلية
+    // إذا عندنا ويبهوك محفوظ
+    if (webhookCache.has(message.channel.id)) {
+      webhook = webhookCache.get(message.channel.id);
+    } else {
+      // نجيب الويبهوكات
+      const webhooks = await message.channel.fetchWebhooks();
+
+      // نبحث عن واحد باسم معين
+      webhook = webhooks.find(wh => wh.name === 'MediaClone');
+
+      // إذا ماكانش، ننشئ واحد
+      if (!webhook) {
+        webhook = await message.channel.createWebhook('MediaClone', {
+          avatar: client.user.displayAvatarURL()
+        });
+      }
+
+      webhookCache.set(message.channel.id, webhook);
+    }
+
+    // نحول المرفقات
+    const files = message.attachments.map(att => att.url);
+
+    // نحذف الرسالة الأصلية
     await message.delete();
 
-    // إعادة إرسالها كصورة/فيديو حقيقي
-    await message.channel.send({
-      content: `# 📩 مرفق مفيد من ${message.author}`,
+    // نرسل عبر الويبهوك بنفس اسم وصورة المستخدم
+    await webhook.send({
+      content: message.content || '', // لو كان كاتب نص
+      username: message.author.username,
+      avatarURL: message.author.displayAvatarURL({ dynamic: true }),
       files: files
     });
 
@@ -116,6 +140,7 @@ client.on('messageCreate', async (message) => {
     console.error(err);
   }
 });
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
