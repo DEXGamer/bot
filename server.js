@@ -91,35 +91,43 @@ const cute = "<:cuteheart:890924622361559060>"; // ايموجي كيوت قبل
 
 const TARGET_CHANNEL_ID = '911678247941595136';
 
-let webhook;
+let webhook = null;
 
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
   if (message.channel.id !== TARGET_CHANNEL_ID) return;
-  if (message.attachments.size === 0) return;
+  if (!message.attachments.size) return;
 
   try {
-    // إنشاء أو جلب webhook
+    // إنشاء webhook مرة واحدة فقط
     if (!webhook) {
       const hooks = await message.channel.fetchWebhooks();
-      webhook = hooks.find(w => w.name === 'MediaClone');
+
+      webhook = hooks.find(w => w.name === 'MediaRelay');
 
       if (!webhook) {
-        webhook = await message.channel.createWebhook('MediaClone', {
+        webhook = await message.channel.createWebhook('MediaRelay', {
           avatar: client.user.displayAvatarURL()
         });
       }
     }
 
-    const files = message.attachments.map(att => ({
-      attachment: att.url,
-      name: 'media' // 👈 هذا يخفي شكل "file name"
-    }));
+    // تجهيز الملفات بشكل صحيح
+    const files = [];
 
+    message.attachments.forEach(att => {
+      files.push({
+        attachment: att.url,
+        name: att.name || 'media'
+      });
+    });
+
+    // نحذف الرسالة الأصلية
     await message.delete();
 
+    // إعادة الإرسال عبر webhook
     await webhook.send({
-      username: message.author.username,
+      username: message.member?.displayName || message.author.username,
       avatarURL: message.author.displayAvatarURL({ dynamic: true }),
 
       content: message.content || '',
@@ -127,7 +135,7 @@ client.on('messageCreate', async (message) => {
     });
 
   } catch (err) {
-    console.error(err);
+    console.error('ERROR:', err);
   }
 });
 
