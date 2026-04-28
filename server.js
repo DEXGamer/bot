@@ -95,29 +95,25 @@ const TARGET_CHANNEL_ID = '1184475254224072764';
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
   if (message.channel.id !== TARGET_CHANNEL_ID) return;
-
   if (message.attachments.size === 0) return;
 
   try {
-    // نحول كل مرفق إلى Attachment جديد
-    const files = message.attachments.map(att => {
-      return new MessageAttachment(att.url, att.name);
-    });
+    const attachments = message.attachments.map(att => ({
+      attachment: att.url,
+      name: att.name
+    }));
 
-    // حذف الرسالة الأصلية
     await message.delete();
 
-    // إعادة إرسالها كصورة/فيديو حقيقي
     await message.channel.send({
       content: `📩 من ${message.author}`,
-      files: files
+      files: attachments
     });
 
   } catch (err) {
     console.error(err);
   }
 });
-
 
 
 
