@@ -89,8 +89,7 @@ const cute = "<:cuteheart:890924622361559060>"; // ايموجي كيوت قبل
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const TARGET_CHANNEL_ID = '911678247941595136'; // حط ID الروم هنا
-
+const TARGET_CHANNEL_ID = '911678247941595136';
 
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
@@ -99,15 +98,18 @@ client.on('messageCreate', async (message) => {
   if (message.attachments.size === 0) return;
 
   try {
-    // استخراج روابط الصور/الفيديو
-    const links = message.attachments.map(att => att.url);
+    // نحول كل مرفق إلى Attachment جديد
+    const files = message.attachments.map(att => {
+      return new MessageAttachment(att.url, att.name);
+    });
 
     // حذف الرسالة الأصلية
     await message.delete();
 
-    // إعادة الإرسال كرابط (ليس كملف)
+    // إعادة إرسالها كصورة/فيديو حقيقي
     await message.channel.send({
-      content: `📩 من ${message.author}\n${links.join('\n')}`
+      content: `# 📩 مرفق مفيد من ${message.author}`,
+      files: files
     });
 
   } catch (err) {
