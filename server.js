@@ -50,6 +50,7 @@ const client = new Client({
         Intents.FLAGS.GUILD_MESSAGES,
         Intents.FLAGS.DIRECT_MESSAGES,
         Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_MESSAGE_ATTACHMENTS,
         Intents.FLAGS.GUILD_PRESENCES,
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS, // تأكد من استخدام Intents.FLAGS
         Intents.FLAGS.MESSAGE_CONTENT // أضف هذا إذا كنت تحتاج الوصول لمحتوى الرسائل
@@ -91,47 +92,37 @@ const cute = "<:cuteheart:890924622361559060>"; // ايموجي كيوت قبل
 
 const CHANNEL_ID = '1184473749026783272';
 
-let webhook;
 
 client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
-  if (message.channel.id !== CHANNEL_ID) return;
-  if (message.attachments.size === 0) return;
-
   try {
-    // إنشاء أو جلب webhook
-    if (!webhook) {
-      const hooks = await message.channel.fetchWebhooks();
-      webhook = hooks.find(w => w.name === 'MirrorBot');
+    if (message.author.bot) return;
+    if (message.channel.id !== CHANNEL_ID) return;
 
-      if (!webhook) {
-        webhook = await message.channel.createWebhook('MirrorBot', {
-          avatar: client.user.displayAvatarURL()
-        });
-      }
-    }
+    // إذا ما فيهاش مرفقات → تجاهل
+    if (!message.attachments || message.attachments.size === 0) return;
 
-    // تجهيز الوسائط (صورة أو فيديو)
-    const files = message.attachments.map(att => ({
-      attachment: att.url,
-      name: att.name || 'media'
-    }));
+    // نتأكد أن فيها صورة أو فيديو
+    const hasMedia = message.attachments.some(att =>
+      att.contentType?.startsWith('image') ||
+      att.contentType?.startsWith('video')
+    );
 
-    const content = message.content || '';
+    if (!hasMedia) return;
 
-    // حذف الرسالة الأصلية
+    // جمع الملفات
+    const files = message.attachments.map(att => att.url);
+
+    // نحذف الرسالة الأصلية
     await message.delete();
 
-    // إعادة الإرسال بشكل طبيعي داخل الشات
-    await webhook.send({
-      username: message.member?.displayName || message.author.username,
-      avatarURL: message.author.displayAvatarURL({ dynamic: true }),
-      content: content,
+    // إعادة الإرسال (Discord يعرضها تلقائياً كصورة/فيديو)
+    await message.channel.send({
+      content: message.content || '',
       files: files
     });
 
   } catch (err) {
-    console.error(err);
+    console.error('ERROR:', err);
   }
 });
 
