@@ -90,30 +90,6 @@ const cute = "<:cuteheart:890924622361559060>"; // ايموجي كيوت قبل
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const TARGET_CHANNEL_ID = '1184475254224072764';
-
-client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
-  if (message.channel.id !== TARGET_CHANNEL_ID) return;
-  if (message.attachments.size === 0) return;
-
-  try {
-    const attachments = message.attachments.map(att => ({
-      attachment: att.url,
-      name: att.name
-    }));
-
-    await message.delete();
-
-    await message.channel.send({
-      content: `📩 من ${message.author}`,
-      files: attachments
-    });
-
-  } catch (err) {
-    console.error(err);
-  }
-});
 
 
 
