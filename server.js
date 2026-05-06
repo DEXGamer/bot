@@ -231,8 +231,8 @@ client.once('ready', async () => {
         }
     }
 });
-
-const TARGET_CHANNEL_ID = ''; // استبدل هذا بمعرف القناة المطلوبة
+*/
+const TARGET_CHANNEL_ID = '1184473749026783272'; // استبدل هذا بمعرف القناة المطلوبة
 
 client.on('messageCreate', async message => {
     // تجاهل الرسائل من البوتات وتجاهل الرسائل خارج القناة المحددة
@@ -273,7 +273,7 @@ client.on('messageCreate', async message => {
     }
 });
 
-*/
+
 
 
 
