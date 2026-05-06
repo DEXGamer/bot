@@ -232,44 +232,37 @@ client.once('ready', async () => {
     }
 });
 */
-const TARGET_CHANNEL_ID = '1184473749026783272'; // استبدل هذا بمعرف القناة المطلوبة
+
+
+
+
+const TARGET_CHANNEL_ID = '1184473749026783272';
 
 client.on('messageCreate', async message => {
-    // تجاهل الرسائل من البوتات وتجاهل الرسائل خارج القناة المحددة
     if (message.author.bot || message.channel.id !== TARGET_CHANNEL_ID) return;
 
     try {
+        // تحميل جميع المرفقات (صور / فيديو)
+        const files = message.attachments.map(att => {
+            return new MessageAttachment(att.url, att.name);
+        });
+
         // حذف الرسالة الأصلية
         await message.delete();
 
-        // إنشاء مُضمّن (Embed) للرسالة الجديدة
-        const embed = new MessageEmbed()
-            .setColor('#0099ff')
-            .setAuthor({
-                name: message.author.username,
-                iconURL: message.author.displayAvatarURL({ dynamic: true })
-            })
-            .setDescription(message.content)
-            .setFooter({
-                text: `تم الإرسال في ${message.createdAt.toLocaleString()}`
-            })
-            .setTimestamp();
-
-        // إذا كانت الرسالة تحتوي على مرفقات (صور/ملفات)
-        if (message.attachments.size > 0) {
-            embed.setImage(message.attachments.first().url);
-        }
-
-        // إرسال الرسالة الجديدة كمُضمّن
-        const sentMessage = await message.channel.send({ embeds: [embed] });
-
-        // إضافة ردود الفعل (Reactions)
+        // إعادة إرسالها بنفس المحتوى
+        await message.channel.send({
+            content: message.content || null,
+            files: files
+        });
+// إضافة ردود الفعل (Reactions)
         const reactions = ['👍', '👎', '❤️', '😂']; // يمكنك تغيير هذه الردود
         for (const reaction of reactions) {
             await sentMessage.react(reaction);
         }
+
     } catch (error) {
-        console.error('حدث خطأ:', error);
+        console.error('خطأ:', error);
     }
 });
 
