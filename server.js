@@ -255,12 +255,6 @@ client.on('messageCreate', async message => {
             content: message.content || null,
             files: files
         });
-// إضافة ردود الفعل (Reactions)
-        const reactions = ['👍', '👎', '❤️', '😂']; // يمكنك تغيير هذه الردود
-        for (const reaction of reactions) {
-            await sentMessage.react(reaction);
-        }
-
     } catch (error) {
         console.error('خطأ:', error);
     }
