@@ -95,7 +95,7 @@ const OWNER_ID = '556833562549026816';
 // ايدي الروم
 const TARGET_CHANNEL_ID = '939516259295457350';
 
-// ايدي الرتبة
+// ايدي الرتبة التي سيتم منشنها
 const ROLE_ID = '1502424079263858728';
 
 client.on('messageCreate', async (message) => {
@@ -105,14 +105,14 @@ client.on('messageCreate', async (message) => {
         // تجاهل البوتات
         if (message.author.bot) return;
 
-        // فقط الرسائل الخاصة
+        // فقط الخاص
         if (message.channel.type !== 'DM') return;
 
         // فقط صاحب البوت
         if (message.author.id !== OWNER_ID) return;
 
-        // التأكد من وجود ملفات
-        if (!message.attachments.size) return;
+        // التأكد من وجود مرفقات
+        if (message.attachments.size === 0) return;
 
         // جلب الروم
         const channel = await client.channels.fetch(TARGET_CHANNEL_ID);
@@ -120,29 +120,26 @@ client.on('messageCreate', async (message) => {
         if (!channel) return;
 
         // تجهيز الملفات
-        const files = [];
-
-        message.attachments.forEach(att => {
-            files.push(new MessageAttachment(att.url, att.name));
+        const files = message.attachments.map(att => {
+            return new MessageAttachment(att.url, att.name);
         });
 
         // ارسال الرسالة
         const sentMessage = await channel.send({
-            content: `<@&${ROLE_ID}>`,
+            content: <@&${ROLE_ID}>,
             files: files
         });
 
-        // الرياكشنات
-        await sentMessage.react('931640040164032524');
-        await sentMessage.react('931640039878828033');
-        await sentMessage.react('938583285725036604');
+        // اضافة رياكشنات
+        await sentMessage.react('<:Like:931640040164032524>');
+        await sentMessage.react('<:Dislike:931640039878828033>');
+        await sentMessage.react('<a:news:938583285725036604>');
 
     } catch (error) {
-        console.error('حدث خطأ:', error);
+        console.error(error);
     }
 
 });
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -156,7 +153,7 @@ client.once('ready', () => {
 });
 
 client.on('messageCreate', async message => {
-  if (!message.member.permissions.has('ADMINISTRATOR')) return;
+  if (message.guild && message.member.permissions.has('ADMINISTRATOR'))
   
   if (message.content === '!إنشاء-روم') {
     // الحصول على جميع الفئات (categories) في السيرفر
@@ -1257,7 +1254,7 @@ client.on('messageCreate', async (message) => {
 client.on('messageCreate', (message) => {
   if (message.content === 'join') {
     message.delete();
-    if (!message.member.permissions.has('ADMINISTRATOR')) return;
+    if (message.guild && message.member.permissions.has('ADMINISTRATOR'))
     client.emit('guildMemberAdd', message.member);
   }
 });
