@@ -90,6 +90,56 @@ const cute = "<:cuteheart:890924622361559060>"; // ايموجي كيوت قبل
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const OWNER_ID = '556833562549026816';
+
+// ايدي الروم
+const TARGET_CHANNEL_ID = '939516259295457350';
+
+// ايدي الرتبة التي سيتم منشنها
+const ROLE_ID = '1502424079263858728';
+
+client.on('messageCreate', async (message) => {
+
+    try {
+
+        // تجاهل البوتات
+        if (message.author.bot) return;
+
+        // فقط الخاص
+        if (message.channel.type !== 'DM') return;
+
+        // فقط صاحب البوت
+        if (message.author.id !== OWNER_ID) return;
+
+        // التأكد من وجود مرفقات
+        if (message.attachments.size === 0) return;
+
+        // جلب الروم
+        const channel = await client.channels.fetch(TARGET_CHANNEL_ID);
+
+        if (!channel) return;
+
+        // تجهيز الملفات
+        const files = message.attachments.map(att => {
+            return new MessageAttachment(att.url, att.name);
+        });
+
+        // ارسال الرسالة
+        const sentMessage = await channel.send({
+            content: `<@&${ROLE_ID}>`,
+            files: files
+        });
+
+        // اضافة رياكشنات
+        await sentMessage.react('<:Like:931640040164032524>');
+        await sentMessage.react('<:Dislike:931640039878828033>');
+        await sentMessage.react('<a:news:938583285725036604>');
+
+    } catch (error) {
+        console.error(error);
+    }
+
+});
 
 
 
