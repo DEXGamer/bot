@@ -125,11 +125,10 @@ client.on('messageCreate', async (message) => {
         });
 
         // ارسال الرسالة
-        const sentMessage = await channel.send({
-            content: <@&${ROLE_ID}>,
-            files: files
-        });
-
+const sentMessage = await channel.send({
+    content: `<@&${ROLE_ID}>`,
+    files: files
+});
         // اضافة رياكشنات
         await sentMessage.react('<:Like:931640040164032524>');
         await sentMessage.react('<:Dislike:931640039878828033>');
